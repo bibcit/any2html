@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name:       Any2HTML
+ * Plugin Name:       Bibcit Any2HTML
  * Description:       Convert Markdown to HTML inside the WordPress post editor using the Bibcit API. Requires a Bibcit API key obtained from bibcit.com. Your post content is sent to the Bibcit external API for conversion.
  * Version:           1.0.0
  * Requires at least: 5.9
@@ -30,8 +30,8 @@ add_action('admin_menu', 'any2html_add_settings_page');
 function any2html_add_settings_page()
 {
     add_options_page(
-        esc_html__('Any2HTML', 'any2html'),
-        esc_html__('Any2HTML', 'any2html'),
+        esc_html__('Bibcit Any2HTML', 'any2html'),
+        esc_html__('Bibcit Any2HTML', 'any2html'),
         'manage_options',
         'any2html',
         'any2html_render_settings'
@@ -40,31 +40,32 @@ function any2html_add_settings_page()
 
 /* Remove the auto-injected WP "Settings saved." notice on our page —
    we handle saving via AJAX and show our own inline message. */
-add_action( 'admin_head', function() {
+add_action('admin_head', function () {
     $screen = get_current_screen();
-    if ( $screen && 'settings_page_any2html' === $screen->id ) {
-        remove_all_actions( 'admin_notices' );
+    if ($screen && 'settings_page_any2html' === $screen->id) {
+        remove_all_actions('admin_notices');
     }
-} );
+});
 
-function any2html_render_settings() {
-    if ( ! current_user_can( 'manage_options' ) ) return;
+function any2html_render_settings()
+{
+    if (! current_user_can('manage_options')) return;
 
-    $key      = get_option( ANY2HTML_OPTION_KEY, '' );
-    $status   = get_option( ANY2HTML_OPTION_STATUS, '' );
-    $enabled  = get_option( ANY2HTML_OPTION_ENABLED, '0' );
-    $is_valid = ( 'valid' === $status );
-    ?>
+    $key      = get_option(ANY2HTML_OPTION_KEY, '');
+    $status   = get_option(ANY2HTML_OPTION_STATUS, '');
+    $enabled  = get_option(ANY2HTML_OPTION_ENABLED, '0');
+    $is_valid = ('valid' === $status);
+?>
     <div class="wrap any2html-wrap">
 
         <div class="any2html-page-header">
             <div class="any2html-logo-badge" aria-hidden="true">A2H</div>
             <div class="any2html-header-text">
                 <div class="any2html-page-title">
-                    <?php esc_html_e( 'Any2HTML', 'any2html' ); ?>
-                    <span class="any2html-version-badge">v<?php echo esc_html( ANY2HTML_VERSION ); ?></span>
+                    <?php esc_html_e('Bibcit Any2HTML', 'any2html'); ?>
+                    <span class="any2html-version-badge">v<?php echo esc_html(ANY2HTML_VERSION); ?></span>
                 </div>
-                <p class="any2html-page-subtitle"><?php esc_html_e( 'Convert Markdown to HTML inside the post editor via the Bibcit API.', 'any2html' ); ?></p>
+                <p class="any2html-page-subtitle"><?php esc_html_e('Convert Markdown to HTML inside the post editor via the Bibcit API.', 'any2html'); ?></p>
             </div>
         </div>
 
@@ -81,7 +82,7 @@ function any2html_render_settings() {
         </div>
 
         <form id="any2html-settings-form">
-            <?php wp_nonce_field( 'any2html_save_settings', 'any2html_save_nonce' ); ?>
+            <?php wp_nonce_field('any2html_save_settings', 'any2html_save_nonce'); ?>
 
             <div class="any2html-card">
                 <div class="any2html-card-header">
@@ -106,17 +107,17 @@ function any2html_render_settings() {
                                     class="any2html-input"
                                     autocomplete="off"
                                     placeholder="Enter your api key here" />
-                                <button type="button" class="any2html-eye" id="any2html-toggle-eye" aria-label="<?php esc_attr_e( 'Show/hide key', 'any2html' ); ?>">
+                                <button type="button" class="any2html-eye" id="any2html-toggle-eye" aria-label="<?php esc_attr_e('Show/hide key', 'any2html'); ?>">
                                     <!-- eye: shown when input is password -->
                                     <svg id="any2html-icon-show" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                                        <circle cx="12" cy="12" r="3"/>
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                        <circle cx="12" cy="12" r="3" />
                                     </svg>
                                     <!-- eye-off: shown when input is text -->
                                     <svg id="any2html-icon-hide" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none">
-                                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/>
-                                        <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/>
-                                        <line x1="1" y1="1" x2="23" y2="23"/>
+                                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                                        <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                                        <line x1="1" y1="1" x2="23" y2="23" />
                                     </svg>
                                 </button>
                             </div>
@@ -194,9 +195,9 @@ function any2html_render_settings() {
                 </div>
             </div>
 
-            <div class="any2html-form-footer" id="any2html-form-footer" <?php if ( ! $is_valid ) echo 'style="display:none"'; ?>>
+            <div class="any2html-form-footer" id="any2html-form-footer" <?php if (! $is_valid) echo 'style="display:none"'; ?>>
                 <button type="button" id="any2html-save-btn" class="any2html-btn any2html-btn-primary any2html-save-btn">
-                    <?php esc_html_e( 'Save Settings', 'any2html' ); ?>
+                    <?php esc_html_e('Save Settings', 'any2html'); ?>
                 </button>
                 <span id="any2html-save-status"></span>
             </div>
@@ -206,23 +207,25 @@ function any2html_render_settings() {
 <?php
 }
 
-add_action( 'admin_init', 'any2html_register_settings' );
-function any2html_register_settings() {
-    register_setting( 'any2html_settings', ANY2HTML_OPTION_KEY,     [ 'sanitize_callback' => 'sanitize_text_field' ] );
-    register_setting( 'any2html_settings', ANY2HTML_OPTION_STATUS,  [ 'sanitize_callback' => 'sanitize_text_field' ] );
-    register_setting( 'any2html_settings', ANY2HTML_OPTION_ENABLED, [ 'sanitize_callback' => 'sanitize_text_field' ] );
+add_action('admin_init', 'any2html_register_settings');
+function any2html_register_settings()
+{
+    register_setting('any2html_settings', ANY2HTML_OPTION_KEY,     ['sanitize_callback' => 'sanitize_text_field']);
+    register_setting('any2html_settings', ANY2HTML_OPTION_STATUS,  ['sanitize_callback' => 'sanitize_text_field']);
+    register_setting('any2html_settings', ANY2HTML_OPTION_ENABLED, ['sanitize_callback' => 'sanitize_text_field']);
 }
 
 /* ── AJAX: save settings ───────────────────────────────────────────────── */
 
-add_action( 'wp_ajax_any2html_save_settings', 'any2html_ajax_save_settings' );
-function any2html_ajax_save_settings() {
-    check_ajax_referer( 'any2html_save_settings', 'nonce' );
-    if ( ! current_user_can( 'manage_options' ) ) wp_send_json_error( null, 403 );
+add_action('wp_ajax_any2html_save_settings', 'any2html_ajax_save_settings');
+function any2html_ajax_save_settings()
+{
+    check_ajax_referer('any2html_save_settings', 'nonce');
+    if (! current_user_can('manage_options')) wp_send_json_error(null, 403);
 
-    update_option( ANY2HTML_OPTION_KEY,     sanitize_text_field( wp_unslash( $_POST['api_key']  ?? '' ) ), false );
-    update_option( ANY2HTML_OPTION_STATUS,  sanitize_text_field( wp_unslash( $_POST['api_status'] ?? '' ) ), false );
-    update_option( ANY2HTML_OPTION_ENABLED, sanitize_text_field( wp_unslash( $_POST['enabled']  ?? '0' ) ), false );
+    update_option(ANY2HTML_OPTION_KEY,     sanitize_text_field(wp_unslash($_POST['api_key']  ?? '')), false);
+    update_option(ANY2HTML_OPTION_STATUS,  sanitize_text_field(wp_unslash($_POST['api_status'] ?? '')), false);
+    update_option(ANY2HTML_OPTION_ENABLED, sanitize_text_field(wp_unslash($_POST['enabled']  ?? '0')), false);
 
     wp_send_json_success();
 }
@@ -303,7 +306,7 @@ function any2html_add_meta_box()
         if (post_type_supports($post_type, 'editor')) {
             add_meta_box(
                 'any2html_box',
-                esc_html__('Any2HTML — Markdown Converter', 'any2html'),
+                esc_html__('Bibcit Any2HTML — Markdown Converter', 'any2html'),
                 'any2html_render_meta_box',
                 $post_type
             );
@@ -363,11 +366,11 @@ function any2html_enqueue($hook)
 
     if ('settings_page_any2html' === $hook) {
         wp_enqueue_script('any2html-settings', $base . 'any2html-settings.js', ['jquery'], ANY2HTML_VERSION, true);
-        wp_localize_script( 'any2html-settings', 'any2htmlSettings', [
-            'ajaxUrl'    => admin_url( 'admin-ajax.php' ),
-            'nonce'      => wp_create_nonce( 'any2html_validate' ),
-            'saveNonce'  => wp_create_nonce( 'any2html_save_settings' ),
-        ] );
+        wp_localize_script('any2html-settings', 'any2htmlSettings', [
+            'ajaxUrl'    => admin_url('admin-ajax.php'),
+            'nonce'      => wp_create_nonce('any2html_validate'),
+            'saveNonce'  => wp_create_nonce('any2html_save_settings'),
+        ]);
     }
 
     if (in_array($hook, ['post.php', 'post-new.php'], true)) {

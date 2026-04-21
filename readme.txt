@@ -1,8 +1,8 @@
-=== Any2HTML ===
-Contributors:      leibra
+=== Bibcit Any2HTML ===
+Contributors:      bibcithelp,leibra
 Tags:              markdown, editor, converter, bibcit, html
 Requires at least: 5.9
-Tested up to:      6.9.4
+Tested up to:      6.9
 Requires PHP:      7.4
 Stable tag:        1.0.0
 License:           GPL-2.0-or-later
@@ -12,7 +12,7 @@ Convert Markdown to HTML directly inside the WordPress post editor using the Bib
 
 == Description ==
 
-Any2HTML adds a **Markdown input panel** to the post editor. Paste your Markdown, click **Convert to HTML**, and the resulting HTML is inserted straight into the editor — no copy-pasting required.
+Bibcit Any2HTML adds a **Markdown input panel** to the post editor. Paste your Markdown, click **Convert to HTML**, and the resulting HTML is inserted straight into the editor — no copy-pasting required.
 
 **Features**
 
@@ -44,10 +44,10 @@ Please review Bibcit's policies before use:
 
 1. Upload the `any2html` folder to `/wp-content/plugins/`.
 2. Activate the plugin through **Plugins → Installed Plugins**.
-3. Go to **Settings → Any2HTML**.
+3. Go to **Settings → Bibcit Any2HTML**.
 4. Enter your Bibcit API key and click **Validate Key**.
 5. Enable the **Enable Markdown Conversion** toggle and save.
-6. Open any post or page — the **Any2HTML — Markdown Converter** meta box will appear below the editor.
+6. Open any post or page — the **Bibcit Any2HTML — Markdown Converter** meta box will appear below the editor.
 
 == Frequently Asked Questions ==
 
