@@ -1,5 +1,5 @@
 === Bibcit Any2HTML ===
-Contributors:      bibcithelp,leibra
+Contributors:      bibcithelp,rastermechanism,leibra
 Tags:              markdown, editor, converter, bibcit, html
 Requires at least: 5.9
 Tested up to:      6.9

@@ -6,8 +6,8 @@
  * Version:           1.0.0
  * Requires at least: 5.9
  * Requires PHP:      7.4
- * Author:            Rupesh Kumar
- * Author URI:        https://github.com/leibra
+ * Author:            Rakesh Kumar
+ * Author URI:        https://profiles.wordpress.org/bibcithelp/
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       any2html
