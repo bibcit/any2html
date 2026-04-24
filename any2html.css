@@ -556,3 +556,269 @@ div.any2html-page-title {
 .any2html-status--success { color: var(--a2h-green);  font-weight: 600; }
 .any2html-status--error   { color: var(--a2h-red);    font-weight: 600; }
 .any2html-status--error a { color: var(--a2h-red); font-weight: 700; text-decoration: underline; }
+
+
+/* ═══════════════════════════════════════════════════════════
+   Editor Meta Box — redesigned
+   ═══════════════════════════════════════════════════════════ */
+
+#any2html-panel {
+    border: 1.5px solid var(--a2h-gray-200);
+    border-radius: var(--a2h-radius);
+    background: var(--a2h-surface);
+    box-shadow: var(--a2h-shadow-sm);
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* ── Tabs ── */
+.a2h-tabs {
+    display: flex;
+    gap: 0;
+    background: var(--a2h-bg);
+    border-bottom: 1.5px solid var(--a2h-gray-200);
+    padding: 0 4px;
+}
+
+.a2h-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--a2h-gray-500);
+    background: none;
+    border: none;
+    border-bottom: 2.5px solid transparent;
+    margin-bottom: -1.5px;
+    cursor: pointer;
+    transition: color .15s, border-color .15s;
+    white-space: nowrap;
+}
+
+.a2h-tab:hover { color: var(--a2h-gray-700); }
+
+.a2h-tab--active {
+    color: var(--a2h-brand);
+    border-bottom-color: var(--a2h-brand);
+}
+
+/* ── Markdown pane ── */
+.a2h-md-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 14px;
+    border-bottom: 1px solid var(--a2h-gray-100);
+    background: var(--a2h-bg);
+}
+
+.a2h-md-hint {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--a2h-gray-400);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+.a2h-clear-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--a2h-gray-400);
+    padding: 3px 8px;
+    border-radius: 4px;
+    transition: color .15s, background .15s;
+}
+.a2h-clear-btn:hover { color: var(--a2h-red); background: var(--a2h-red-bg); }
+
+#any2html-input {
+    display: block;
+    width: 100%;
+    min-height: 180px;
+    padding: 14px 16px;
+    font-size: 13px;
+    font-family: ui-monospace, 'SF Mono', 'Fira Code', 'Courier New', monospace;
+    line-height: 1.65;
+    color: var(--a2h-gray-900);
+    background: var(--a2h-surface);
+    border: none;
+    resize: vertical;
+    box-sizing: border-box;
+    outline: none;
+    tab-size: 2;
+}
+#any2html-input:focus { background: #fafbff; }
+
+/* ── Upload pane ── */
+#a2h-pane-file { padding: 16px; }
+
+.a2h-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 32px 20px;
+    border: 2px dashed var(--a2h-gray-300);
+    border-radius: var(--a2h-radius);
+    background: var(--a2h-bg);
+    cursor: pointer;
+    transition: border-color .2s, background .2s;
+    text-align: center;
+    user-select: none;
+}
+
+.a2h-dropzone:hover,
+.a2h-dropzone--hover {
+    border-color: var(--a2h-brand);
+    background: var(--a2h-brand-light);
+}
+
+.a2h-dropzone--has-file {
+    border-style: solid;
+    border-color: var(--a2h-green-border);
+    background: var(--a2h-green-bg);
+}
+
+.a2h-dropzone-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--a2h-gray-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--a2h-gray-400);
+    transition: background .2s, color .2s;
+}
+
+.a2h-dropzone:hover .a2h-dropzone-icon,
+.a2h-dropzone--hover .a2h-dropzone-icon {
+    background: var(--a2h-brand-light);
+    color: var(--a2h-brand);
+}
+
+.a2h-dropzone--has-file .a2h-dropzone-icon {
+    background: var(--a2h-green-bg);
+    color: var(--a2h-green);
+}
+
+.a2h-dropzone-title {
+    margin: 0;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--a2h-gray-700);
+}
+
+.a2h-dropzone-sub {
+    margin: 0;
+    font-size: 12px;
+    color: var(--a2h-gray-400);
+    line-height: 1.5;
+}
+
+/* ── File chip ── */
+.a2h-file-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: var(--a2h-brand-light);
+    border: 1px solid var(--a2h-brand-border);
+    border-radius: var(--a2h-radius-sm);
+    font-size: 12.5px;
+    color: var(--a2h-brand);
+    font-weight: 500;
+    min-width: 0;
+}
+
+.a2h-file-chip svg { flex-shrink: 0; }
+
+#a2h-file-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.a2h-file-size {
+    flex-shrink: 0;
+    font-size: 11.5px;
+    color: var(--a2h-gray-500);
+    font-weight: 400;
+}
+
+.a2h-chip-remove {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    background: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--a2h-gray-400);
+    padding: 0;
+    transition: color .15s, background .15s;
+}
+.a2h-chip-remove:hover { color: var(--a2h-red); background: var(--a2h-red-bg); }
+
+/* ── Footer ── */
+.a2h-footer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    background: var(--a2h-bg);
+    border-top: 1.5px solid var(--a2h-gray-200);
+}
+
+.a2h-status-wrap {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+/* ── Progress bar ── */
+.a2h-progress {
+    height: 4px;
+    background: var(--a2h-gray-200);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.a2h-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--a2h-brand), #818cf8);
+    border-radius: 4px;
+    transition: width .3s ease;
+}
+
+/* ── Status text ── */
+#any2html-status {
+    font-size: 12.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    line-height: 1.4;
+}
+
+.any2html-status--loading { color: var(--a2h-gray-500); }
+.any2html-status--success { color: var(--a2h-green); font-weight: 600; }
+.any2html-status--error   { color: var(--a2h-red);   font-weight: 600; }
+.any2html-status--error a { color: var(--a2h-red); font-weight: 700; text-decoration: underline; }

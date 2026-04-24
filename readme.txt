@@ -4,7 +4,7 @@ Tags:              markdown, editor, converter, bibcit, html
 Requires at least: 5.9
 Tested up to:      6.9
 Requires PHP:      7.4
-Stable tag:        1.0.0
+Stable tag:        1.1.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -46,8 +46,9 @@ Please review Bibcit's policies before use:
 2. Activate the plugin through **Plugins → Installed Plugins**.
 3. Go to **Settings → Bibcit Any2HTML**.
 4. Enter your Bibcit API key and click **Validate Key**.
-5. Enable the **Enable Markdown Conversion** toggle and save.
-6. Open any post or page — the **Bibcit Any2HTML — Markdown Converter** meta box will appear below the editor.
+5. Save Settings.
+6. Open any post or page — the **Bibcit Any2HTML** meta box will appear below the editor.
+7. You can choose to enter your markdown or upload a file (pdf or image) and convert to html
 
 == Frequently Asked Questions ==
 
