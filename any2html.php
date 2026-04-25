@@ -36,7 +36,7 @@ function any2html_add_settings_page()
         esc_html__('Bibcit Any2HTML', 'bibcit-any2html'),
         esc_html__('Bibcit Any2HTML', 'bibcit-any2html'),
         'manage_options',
-        'bibcit-any2html',
+        'any2html',
         'any2html_render_settings'
     );
 }
