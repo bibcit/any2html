@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name:       Bibcit Any2HTML
- * Description:       Convert Markdown to HTML inside the WordPress post editor using the Bibcit API. Requires a Bibcit API key obtained from bibcit.com. Your post content is sent to the Bibcit external API for conversion.
+ * Description:       Convert Markdown or file (pdf/image) to HTML inside the WordPress post editor using the Bibcit API. Requires a Bibcit API key obtained from bibcit.com. Your post content is sent to the Bibcit external API for conversion.
  * Version:           1.1.0
  * Requires at least: 5.9
  * Requires PHP:      7.4
