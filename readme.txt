@@ -1,4 +1,12 @@
-=== Bibcit Any2HTML === Contributors: bibcithelp,rastermechanism,rupeshonezone Tags: markdown, editor, converter, bibcit, html Requires at least: 5.9 Tested up to: 6.9 Requires PHP: 7.4 Stable tag: 1.1.0 License: GPL-2.0-or-later License URI: https://www.gnu.org/licenses/gpl-2.0.html
+=== Bibcit Any2HTML ===
+Contributors:      bibcithelp,rastermechanism,leibra
+Tags:              markdown, editor, converter, bibcit, html
+Requires at least: 5.9
+Tested up to:      6.9
+Requires PHP:      7.4
+Stable tag:        1.1.0
+License:           GPL-2.0-or-later
+License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
 Convert Markdown to HTML directly inside the WordPress post editor using the Bibcit API.
 
