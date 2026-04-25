@@ -38,20 +38,27 @@ Privacy Policy
 Terms of Service
 == Installation ==
 
-Installation from within WordPress
-Visit Plugins > Add New.
-Search for Bibcit Any2HTML.
-Install and activate the Bibcit Any2HTML plugin.
-Manual installation
-Upload the entire Bibcit Any2HTML folder to the /wp-content/plugins/ directory.
-Visit Plugins.
-Activate the Bibcit Any2HTML plugin.
-Enabling the plugin
-Go to Settings → Bibcit Any2HTML.
-Enter your Bibcit API key and click Validate Key.
-Save Settings.
-Open any post or page — the Bibcit Any2HTML meta box will appear below the editor.
-You can choose to enter your markdown or upload a file (pdf or image) and convert to html
+## Installation
+
+### Installation from within WordPress
+1. Visit **Plugins > Add New**.
+2. Search for **Bibcit Any2HTML**.
+3. Install and activate the **Bibcit Any2HTML** plugin.
+
+---
+
+### Manual installation
+1. Upload the entire `Bibcit Any2HTML` folder to the `/wp-content/plugins/` directory.
+2. Visit **Plugins**.
+3. Activate the **Bibcit Any2HTML** plugin.
+
+### Enabling the plugin
+1. Go to Settings → Bibcit Any2HTML.
+2. Enter your Bibcit API key and click Validate Key.
+3. Save Settings.
+4. Open any post or page — the Bibcit Any2HTML meta box will appear below the editor.
+5. You can choose to enter your markdown or upload a file (pdf or image) and convert to html
+
 == Frequently Asked Questions ==
 
 = Where do I get an API key? =
