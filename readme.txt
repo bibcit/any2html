@@ -1,6 +1,6 @@
 === Bibcit Any2HTML ===
 Contributors:      bibcithelp,rastermechanism,leibra
-Tags:              markdown, editor, converter, bibcit, html
+Tags:              markdown, pdf, image, editor, converter, html converter
 Requires at least: 6.5
 Tested up to:      6.9
 Requires PHP:      8.0
@@ -8,7 +8,7 @@ Stable tag:        1.1.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
-Convert Markdown to HTML directly inside the WordPress post editor using the Bibcit API.
+Convert Markdown or file (pdf/image) to HTML directly inside the WordPress post editor using the Bibcit API.
 
 == Description ==
 
@@ -23,19 +23,27 @@ Features:
 3. Markdown or file to HTML conversion powered by the Bibcit API
 4. Converted html automatically added to your content of post
 
+== Requirements ==
+
 A Bibcit account and API key — sign up at bibcit.com
+
 = Third-Party Service =
 
-This plugin relies on the Bibcit API (api.bibcit.com), an external service operated by Bibcit.
+This plugin connects to the Bibcit API (api.bibcit.com), an external service operated by Bibcit.
 
-What data is sent: The Markdown text you enter in the conversion panel is transmitted to https://api.bibcit.com/api/massivemark/mtoh for processing. Your API key is sent as a request header (Bibcit-Key) for authentication.
-When data is sent: Only when you click the "Convert to HTML" button, and only if the plugin is enabled and the API key is valid.
-No data is stored externally beyond what is necessary to fulfil the conversion request.
-API Documentation: github.com/bibcit/MassiveMark
+Data transmitted: Your Markdown text or uploaded file (PDF/image) is sent to Bibcit's API solely for conversion. Your API key is included as a request header (Bibcit-Key) for authentication.
+When it's sent: Only on clicking "Convert to HTML", and only when the plugin is enabled with a valid API key.
+Privacy: Data is processed in real-time and not stored, logged, or retained by this plugin (Bibcit Any2HTML) beyond fulfilling the request — ensuring full privacy of your content.
+
+APIs used by this plugin:
+* MassiveMark (Markdown/text to HTML): https://github.com/bibcit/MassiveMark
+* MassivePix (PDF/image to HTML): https://github.com/bibcit/MassivePix
+
 Please review Bibcit's policies before use:
 
-Privacy Policy
-Terms of Service
+**[Privacy Policy](https://www.bibcit.com/en/privacy)**
+**[Terms of Service](https://www.bibcit.com/en/terms)**
+
 == Installation ==
 
 ## Installation
@@ -67,7 +75,8 @@ Sign up at bibcit.com to obtain your API key.
 
 = Is my content stored by Bibcit? =
 
-Please refer to the Bibcit Privacy Policy for details on data handling.
+No. Your content is processed in real-time and not stored or retained. See our Privacy Policy for full details.
+
 
 = The meta box does not appear in the editor. =
 
