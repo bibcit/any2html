@@ -81,7 +81,9 @@ The plugin will display an error message in the editor with a direct link to the
 
 1. Settings page — API key validation 
 2. Post editor — Markdown input panel with Convert button.
-3. [Watch Demo](https://www.youtube.com/watch?v=n4HOEXshfNg)
+
+== Demo ==
+ [Watch Demo](https://www.youtube.com/watch?v=n4HOEXshfNg)
 
 == Source Code ==
 
