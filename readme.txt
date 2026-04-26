@@ -12,16 +12,16 @@ Convert Markdown to HTML directly inside the WordPress post editor using the Bib
 
 == Description ==
 
+https://youtu.be/n4HOEXshfNg
+
 Bibcit Any2HTML adds a Markdown input panel to the post editor. Paste your Markdown, click Convert to HTML, and the resulting HTML is inserted straight into the editor — no copy-pasting required.
 
-Features
+Features:
 
-Markdown-to-HTML conversion powered by the Bibcit API
-Works with the Classic Editor, Gutenberg (block editor), and TinyMCE
-API key management with one-click validation
-Enable / disable toggle — locked until a valid API key is confirmed
-Automatic key invalidation when the API returns an unauthorized response, with a direct re-validate link
-Requirements
+1. API key management with one-click validation.
+2. Works with the Classic Editor, Gutenberg (block editor), and TinyMCE
+3. Markdown or file to HTML conversion powered by the Bibcit API
+4. Converted html automatically added to your content of post
 
 A Bibcit account and API key — sign up at bibcit.com
 = Third-Party Service =
@@ -81,9 +81,6 @@ The plugin will display an error message in the editor with a direct link to the
 
 1. Settings page — API key validation 
 2. Post editor — Markdown input panel with Convert button.
-
-== Demo ==
- [Watch Demo](https://www.youtube.com/watch?v=n4HOEXshfNg)
 
 == Source Code ==
 
