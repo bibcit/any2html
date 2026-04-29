@@ -219,11 +219,19 @@
     /* ── Diagram → HTML ── */
     function convertDiagram(type, code) {
         setBusy('Converting\u2026');
-        $.post(any2htmlEditor.ajaxUrl, {
-            action: 'any2html_diag_convert',
-            diag_type: type,
-            diag_code: code,
-            _ajax_nonce: any2htmlEditor.diagNonce
+        // $.post(any2htmlEditor.ajaxUrl, {
+        //     action: 'any2html_diag_convert',
+        //     diag_type: type,
+        //     diag_code: code,
+        //     _ajax_nonce: any2htmlEditor.diagNonce
+        // })
+
+        $.ajax({
+            url: any2htmlEditor.ajaxUrl + '?action=any2html_diag_convert&_ajax_nonce=' + any2htmlEditor.diagNonce + '&diag_type=' + encodeURIComponent(type),
+            type: 'POST',
+            contentType: 'text/plain',
+            data: code,
+            processData: false
         })
             .done(function (res) {
                 if (res.success) {

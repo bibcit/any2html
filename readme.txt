@@ -1,10 +1,10 @@
 === Bibcit Any2HTML ===
 Contributors:      bibcithelp,rastermechanism,rupeshonezone
-Tags:              markdown to html, html converter, pdf to html, diagram generator,  mermaid diagrams
+Tags:              markdown,  html converter, pdf, diagram,  mermaid
 Requires at least: 6.5
 Tested up to:      6.9
 Requires PHP:      8.0
-Stable tag:        1.2.0
+Stable tag:        1.2.2
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 

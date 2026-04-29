@@ -3,7 +3,7 @@
 /**
  * Plugin Name:       Bibcit Any2HTML
  * Description:       Convert Markdown or file (pdf/image) to HTML inside the WordPress post editor using the Bibcit API. Requires a Bibcit API key obtained from bibcit.com. Your post content is sent to the Bibcit external API for conversion.
- * Version:           1.2.0
+ * Version:           1.2.2
  * Requires at least: 6.5
  * Requires PHP:      8.0
  * Author:            Rakesh Kumar
@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('ANY2HTML_VERSION',        '1.2.0');
+define('ANY2HTML_VERSION',        '1.2.2');
 define('ANY2HTML_OPTION_KEY',     'any2html_api_key');
 define('ANY2HTML_OPTION_STATUS',  'any2html_api_status');
 define('ANY2HTML_OPTION_ENABLED', 'any2html_enabled');
@@ -330,7 +330,7 @@ function any2html_ajax_diag_classify()
     check_ajax_referer('any2html_diag_convert');
     if (! current_user_can('edit_posts')) wp_send_json_error(null, 403);
 
-    $diag_code = sanitize_textarea_field(wp_unslash($_POST['diag_code'] ?? ''));
+    $diag_code = ($_POST['diag_code'] ?? ''); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
     if (empty($diag_code)) {
         wp_send_json_error(['message' => 'Diagram code is required.']);
     }
@@ -371,10 +371,11 @@ function any2html_ajax_diag_convert()
         wp_send_json_error(['message' => 'API key is invalid.']);
     }
 
-    $diag_type = sanitize_text_field(wp_unslash($_POST['diag_type'] ?? ''));
-    $diag_code = sanitize_textarea_field(wp_unslash($_POST['diag_code'] ?? ''));
-    $key       = get_option(ANY2HTML_OPTION_KEY, '');
+    $diag_type = sanitize_text_field(wp_unslash($_REQUEST['diag_type'] ?? ''));
+    $diag_code = file_get_contents('php://input');
 
+    $key       = get_option(ANY2HTML_OPTION_KEY, '');
+    // error_log('Converting diagram with type: ' . $diag_type . ' and code: ' . $diag_code); // Debug log for input values
     if ($diag_type === 'unknown') {
         $diag_type = '';
         wp_send_json_error(['message' => 'Unable to autodetect Diagram type. Please select a type manually..']);
@@ -387,8 +388,8 @@ function any2html_ajax_diag_convert()
     $response = wp_remote_post(ANY2HTML_API_BASE . '/api/mdiag/code2Svg', [
         'headers' => [
             'Bibcit-Key'   => $key,
-            'Content-Type' => 'text/plain',
-            'X-diag-type' => $diag_type,
+            'Content-Type' => 'text/plain;charset=UTF-8',
+            'x-diag-type' => $diag_type,
         ],
         'body'    => $diag_code,
         'timeout' => 30,
@@ -399,7 +400,9 @@ function any2html_ajax_diag_convert()
     }
 
     $code = wp_remote_retrieve_response_code($response);
-    //error_log('API response code: ' . print_r($response, true)); // Debug log for API response code
+
+    // error_log('API response code: ' . $code . ' => ' . print_r($response, true)); // Debug log for API response code
+
     if (in_array($code, [401, 403, 500, 504], true)) {
         if (401 === $code) {
             update_option(ANY2HTML_OPTION_STATUS, 'invalid', false);
