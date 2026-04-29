@@ -15,6 +15,8 @@
     var $fileName = $('#a2h-file-name');
     var $fileSize = $('#a2h-file-size');
     var $tabs = $('.a2h-tab');
+    var $diagType = $('#a2h-diag-type');
+    var $diagInput = $('#any2html-diag-input');
 
     var MAX_BYTES = 5 * 1024 * 1024;
     var activeTab = 'md';
@@ -22,7 +24,8 @@
 
     /* ── Tabs ── */
     $tabs.on('click', function () {
-        var target = $(this).is('#a2h-tab-file') ? 'file' : 'md';
+        var id = $(this).attr('id');
+        var target = id === 'a2h-tab-file' ? 'file' : id === 'a2h-tab-diag' ? 'diag' : 'md';
         switchTab(target);
     });
 
@@ -30,16 +33,69 @@
         activeTab = tab;
         $('#a2h-tab-md').toggleClass('a2h-tab--active', tab === 'md').attr('aria-selected', tab === 'md');
         $('#a2h-tab-file').toggleClass('a2h-tab--active', tab === 'file').attr('aria-selected', tab === 'file');
+        $('#a2h-tab-diag').toggleClass('a2h-tab--active', tab === 'diag').attr('aria-selected', tab === 'diag');
         $('#a2h-pane-md').prop('hidden', tab !== 'md');
         $('#a2h-pane-file').prop('hidden', tab !== 'file');
+        $('#a2h-pane-diag').prop('hidden', tab !== 'diag');
+        updateConvertBtn();
         clearStatus();
     }
 
     /* ── Clear markdown ── */
     $('#any2html-md-clear').on('click', function () {
         $input.val('').focus();
+        updateConvertBtn();
         clearStatus();
     });
+
+    /* ── Diagram tab: classify + enable/disable convert button ── */
+    var classifyTimer = null;
+
+    $diagType.on('change', updateConvertBtn);
+
+    $diagInput.on('input', function () {
+        updateConvertBtn();
+        clearTimeout(classifyTimer);
+        var code = $diagInput.val().trim();
+        if (!code) {
+            $diagType.val('');
+            return;
+        }
+        classifyTimer = setTimeout(function () { classifyDiagram(code); }, 600);
+    });
+
+    $('#any2html-diag-clear').on('click', function () {
+        $diagInput.val('');
+        $diagType.val('');
+        clearTimeout(classifyTimer);
+        updateConvertBtn();
+        clearStatus();
+        $diagInput.focus();
+    });
+
+    function updateConvertBtn() {
+        if (activeTab !== 'diag') {
+            $btn.prop('disabled', false);
+            return;
+        }
+        var ready = $diagInput.val().trim() !== '' && $diagType.val() !== '';
+        $btn.prop('disabled', !ready);
+    }
+
+    /* ── Classify diagram code ── */
+    function classifyDiagram(code) {
+        $.post(any2htmlEditor.ajaxUrl, {
+            action: 'any2html_diag_classify',
+            diag_code: code,
+            _ajax_nonce: any2htmlEditor.diagNonce
+        })
+            .done(function (res) {
+                if (res.success && res.data.diag_type) {
+                    $diagType.val(res.data.diag_type);
+                    updateConvertBtn();
+                }
+            });
+    }
 
     /* ── Dropzone interactions ── */
     $dropzone.on('click', function () { $fileInput.trigger('click'); });
@@ -102,6 +158,25 @@
                 return;
             }
             uploadFile(selectedFile);
+        } else if (activeTab === 'diag') {
+            var diagCode = $diagInput.val().trim();
+            var diagType = $diagType.val();
+            if (diagType === 'unknown') {
+                diagType = '';
+                setStatus('Unable to autodetect Diagram type. Please select a type manually.', 'error');
+                return;
+            }
+
+            if (!diagCode) {
+                setStatus('Please enter Diagram code.', 'error');
+                return;
+            }
+            if (!diagType) {
+                setStatus('Please select Diagram type.', 'error');
+                return;
+            }
+
+            convertDiagram(diagType, diagCode);
         } else {
             var markdown = $input.val().trim();
             if (!markdown) {
@@ -111,6 +186,59 @@
             convertMarkdown(markdown);
         }
     });
+
+    function extractSVG(html) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+        const svg = doc.querySelector("svg");
+        //return svg ? svg.outerHTML : null;
+        if (!svg) return null;
+
+        // 1. Remove fixed dimensions
+        svg.removeAttribute("width");
+        svg.removeAttribute("height");
+
+        // 2. Ensure viewBox exists (fallback if missing)
+        if (!svg.getAttribute("viewBox")) {
+            const width = svg.getAttribute("width") || 840;
+            const height = svg.getAttribute("height") || 560;
+            svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+        }
+
+        // 3. Add responsive scaling behavior
+        svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
+        // 4. Optional: make it behave nicely in layouts
+        svg.style.width = "100%";
+        svg.style.height = "auto";
+        svg.style.display = "block";
+
+        return svg.outerHTML;
+    };
+
+    /* ── Diagram → HTML ── */
+    function convertDiagram(type, code) {
+        setBusy('Converting\u2026');
+        $.post(any2htmlEditor.ajaxUrl, {
+            action: 'any2html_diag_convert',
+            diag_type: type,
+            diag_code: code,
+            _ajax_nonce: any2htmlEditor.diagNonce
+        })
+            .done(function (res) {
+                if (res.success) {
+                    insertHtml(extractSVG(res.data.html));
+                    setStatus('Done \u2014 inserted into editor.', 'success');
+                    $diagInput.val('');
+                    $diagType.val('');
+                    updateConvertBtn();
+                } else {
+                    handleError(res);
+                }
+            })
+            .fail(function () { setStatus('Request failed. Please try again.', 'error'); })
+            .always(setIdle);
+    }
 
     /* ── Markdown → HTML ── */
     function convertMarkdown(markdown) {
@@ -224,8 +352,9 @@
 
     function handleError(res) {
         if (res.data && res.data.key_invalid) {
+            let referenceMsg = (res.data.code === 401) ? ' <a href="' + res.data.settings_url + '">Re-validate \u2192</a>' : ' <a href="https://bibcit.com/" style="color: blue;">Bibcit \u2192</a>';
             setStatus(
-                res.data.message + ' <a href="' + res.data.settings_url + '">Re-validate \u2192</a>',
+                res.data.message + referenceMsg,
                 'error', true
             );
         } else {

@@ -3,7 +3,7 @@
 /**
  * Plugin Name:       Bibcit Any2HTML
  * Description:       Convert Markdown or file (pdf/image) to HTML inside the WordPress post editor using the Bibcit API. Requires a Bibcit API key obtained from bibcit.com. Your post content is sent to the Bibcit external API for conversion.
- * Version:           1.1.0
+ * Version:           1.2.0
  * Requires at least: 6.5
  * Requires PHP:      8.0
  * Author:            Rakesh Kumar
@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('ANY2HTML_VERSION',        '1.1.0');
+define('ANY2HTML_VERSION',        '1.2.0');
 define('ANY2HTML_OPTION_KEY',     'any2html_api_key');
 define('ANY2HTML_OPTION_STATUS',  'any2html_api_status');
 define('ANY2HTML_OPTION_ENABLED', 'any2html_enabled');
@@ -322,6 +322,104 @@ function any2html_ajax_file_convert()
     wp_send_json_success(['html' => $mark_body['htmlContent']]);
 }
 
+/* ── AJAX: classify diagram code ───────────────────────────────────────── */
+
+add_action('wp_ajax_any2html_diag_classify', 'any2html_ajax_diag_classify');
+function any2html_ajax_diag_classify()
+{
+    check_ajax_referer('any2html_diag_convert');
+    if (! current_user_can('edit_posts')) wp_send_json_error(null, 403);
+
+    $diag_code = sanitize_textarea_field(wp_unslash($_POST['diag_code'] ?? ''));
+    if (empty($diag_code)) {
+        wp_send_json_error(['message' => 'Diagram code is required.']);
+    }
+
+    $key = get_option(ANY2HTML_OPTION_KEY, '');
+
+    $response = wp_remote_post(ANY2HTML_API_BASE . '/api/mdiag/classify', [
+        'headers' => [
+            'Bibcit-Key'   => $key,
+            'Content-Type' => 'text/plain',
+        ],
+        'body'    => $diag_code,
+        'timeout' => 10,
+    ]);
+
+    if (is_wp_error($response)) {
+        wp_send_json_error(['message' => $response->get_error_message()]);
+    }
+    $code = wp_remote_retrieve_response_code($response);
+    $body = json_decode(wp_remote_retrieve_body($response), true);
+
+    if (200 !== $code || empty($body['type'])) {
+        wp_send_json_error(['message' => 'Could not classify diagram.']);
+    }
+
+    wp_send_json_success(['diag_type' => sanitize_text_field($body['type'])]);
+}
+
+/* ── AJAX: convert diagram code ───────────────────────────────────────── */
+
+add_action('wp_ajax_any2html_diag_convert', 'any2html_ajax_diag_convert');
+function any2html_ajax_diag_convert()
+{
+    check_ajax_referer('any2html_diag_convert');
+    if (! current_user_can('edit_posts')) wp_send_json_error(['message' => 'Unauthorized'], 403);
+
+    if ('valid' !== get_option(ANY2HTML_OPTION_STATUS)) {
+        wp_send_json_error(['message' => 'API key is invalid.']);
+    }
+
+    $diag_type = sanitize_text_field(wp_unslash($_POST['diag_type'] ?? ''));
+    $diag_code = sanitize_textarea_field(wp_unslash($_POST['diag_code'] ?? ''));
+    $key       = get_option(ANY2HTML_OPTION_KEY, '');
+
+    if ($diag_type === 'unknown') {
+        $diag_type = '';
+        wp_send_json_error(['message' => 'Unable to autodetect Diagram type. Please select a type manually..']);
+    }
+    //if (empty($diag_code)) {
+    if (empty($diag_type) || empty($diag_code)) {
+        wp_send_json_error(['message' => 'Diagram type and code are required.']);
+    }
+
+    $response = wp_remote_post(ANY2HTML_API_BASE . '/api/mdiag/code2Svg', [
+        'headers' => [
+            'Bibcit-Key'   => $key,
+            'Content-Type' => 'text/plain',
+            'X-diag-type' => $diag_type,
+        ],
+        'body'    => $diag_code,
+        'timeout' => 30,
+    ]);
+
+    if (is_wp_error($response)) {
+        wp_send_json_error(['message' => $response->get_error_message()]);
+    }
+
+    $code = wp_remote_retrieve_response_code($response);
+    //error_log('API response code: ' . print_r($response, true)); // Debug log for API response code
+    if (in_array($code, [401, 403, 500, 504], true)) {
+        if (401 === $code) {
+            update_option(ANY2HTML_OPTION_STATUS, 'invalid', false);
+        }
+        wp_send_json_error([
+            'code'         => $code,
+            'message'      => 401 === $code ? 'API key is unauthorized. Please re-validate your key.' : wp_remote_retrieve_body($response),
+            'key_invalid'  => true,
+            'settings_url' => admin_url('options-general.php?page=any2html'),
+        ]);
+    }
+    if ($code !== 200) {
+        wp_send_json_error(['message' => 'Something went wrong. Please make sure your diagram code and type is correct.']);
+    }
+
+    $body = json_decode(wp_remote_retrieve_body($response), true);
+
+    wp_send_json_success(['html' => $body]);
+}
+
 /* ── AJAX: convert markdown ────────────────────────────────────────────── */
 
 add_action('wp_ajax_any2html_convert', 'any2html_ajax_convert');
@@ -349,18 +447,21 @@ function any2html_ajax_convert()
     if (is_wp_error($response)) {
         wp_send_json_error(['message' => $response->get_error_message()]);
     }
-
     $code = wp_remote_retrieve_response_code($response);
-    $body = json_decode(wp_remote_retrieve_body($response), true);
 
     if (in_array($code, [401, 403], true)) {
-        update_option(ANY2HTML_OPTION_STATUS, 'invalid', false);
+        if ($code === 401) {
+            update_option(ANY2HTML_OPTION_STATUS, 'invalid', false);
+        }
         wp_send_json_error([
-            'message'      => 'API key is unauthorized. Please re-validate your key.',
+            'code'         => $code,
+            'message'      => ($code === 403) ? $response['body'] : 'API key is unauthorized. Please re-validate your key.',
             'key_invalid'  => true,
             'settings_url' => admin_url('options-general.php?page=any2html'),
         ]);
     }
+
+    $body = json_decode(wp_remote_retrieve_body($response), true);
 
     if (200 !== $code || empty($body['htmlContent'])) {
         wp_send_json_error(['message' => $body['message'] ?? 'Conversion failed.']);
@@ -411,6 +512,15 @@ function any2html_render_meta_box()
                 </svg>
                 <?php esc_html_e('Upload File', 'bibcit-any2html'); ?>
             </button>
+            <button type="button" class="a2h-tab" id="a2h-tab-diag" role="tab" aria-selected="false" aria-controls="a2h-pane-diag">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                </svg>
+                <?php esc_html_e('Diagram Code', 'bibcit-any2html'); ?>
+            </button>
         </div>
 
         <div id="a2h-pane-md" role="tabpanel" aria-labelledby="a2h-tab-md">
@@ -427,6 +537,66 @@ function any2html_render_meta_box()
             <textarea id="any2html-input"
                 placeholder="# Heading&#10;&#10;Paste your **Markdown** here&hellip;"
                 spellcheck="false"></textarea>
+        </div>
+
+        <div id="a2h-pane-diag" role="tabpanel" aria-labelledby="a2h-tab-diag" hidden>
+            <div class="a2h-diag-toolbar">
+                <label for="a2h-diag-type" class="a2h-diag-label"><?php esc_html_e('Diagram type', 'bibcit-any2html'); ?></label>
+                <div class="a2h-diag-select-wrap hidden">
+                    <select id="a2h-diag-type">
+                        <option value=""><?php esc_html_e('— select type —', 'bibcit-any2html'); ?></option>
+                        <option value="unknown"><?php esc_html_e('Unknown', 'bibcit-any2html'); ?></option>
+                        <optgroup label="<?php esc_attr_e('UML &amp; Software Architecture', 'bibcit-any2html'); ?>">
+                            <option value="plantuml">PlantUML</option>
+                            <option value="c4plantuml">C4 PlantUML</option>
+                            <option value="mermaid">Mermaid</option>
+                            <option value="nomnoml">Nomnoml</option>
+                            <option value="dbml">DBML</option>
+                            <option value="structurizr">Structurizr</option>
+                            <option value="umlet">UMLet</option>
+                        </optgroup>
+                        <optgroup label="<?php esc_attr_e('Graphs &amp; Networks', 'bibcit-any2html'); ?>">
+                            <option value="graphviz">Graphviz</option>
+                            <option value="d2">D2</option>
+                            <option value="erd">ERD</option>
+                            <option value="smiles">SMILES</option>
+                        </optgroup>
+                        <optgroup label="<?php esc_attr_e('Block &amp; Flow Diagrams', 'bibcit-any2html'); ?>">
+                            <option value="blockdiag">BlockDiag</option>
+                            <option value="actdiag">ActDiag</option>
+                            <option value="nwdiag">NwDiag</option>
+                            <option value="packetdiag">PacketDiag</option>
+                            <option value="rackdiag">RackDiag</option>
+                            <option value="seqdiag">SeqDiag</option>
+                            <option value="bpmn">BPMN</option>
+                            <option value="ditaa">Ditaa</option>
+                            <option value="pikchr">Pikchr</option>
+                        </optgroup>
+                        <optgroup label="<?php esc_attr_e('Technical &amp; Specialized', 'bibcit-any2html'); ?>">
+                            <option value="wavedrom">WaveDrom</option>
+                            <option value="bytefield">Bytefield</option>
+                            <option value="svgbob">SVGBob</option>
+                            <option value="tikz">TikZ</option>
+                            <option value="symbolator">Symbolator</option>
+                            <option value="wireviz">WireViz</option>
+                        </optgroup>
+                    </select>
+                    <svg class="a2h-select-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="6 9 12 15 18 9" />
+                    </svg>
+                </div>
+            </div>
+            <div class="a2h-diag-body">
+                <textarea id="any2html-diag-input"
+                    placeholder="<?php esc_attr_e('Paste your diagram code here…', 'bibcit-any2html'); ?>"
+                    spellcheck="false"></textarea>
+                <button type="button" class="a2h-diag-clear" id="any2html-diag-clear" aria-label="<?php esc_attr_e('Clear', 'bibcit-any2html'); ?>">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
         </div>
 
         <div id="a2h-pane-file" role="tabpanel" aria-labelledby="a2h-tab-file" hidden>
@@ -499,9 +669,10 @@ function any2html_enqueue($hook)
     if (in_array($hook, ['post.php', 'post-new.php'], true)) {
         wp_enqueue_script('any2html-editor', $base . 'any2html-editor.js', ['jquery'], ANY2HTML_VERSION, true);
         wp_localize_script('any2html-editor', 'any2htmlEditor', [
-            'ajaxUrl'      => admin_url('admin-ajax.php'),
-            'nonce'        => wp_create_nonce('any2html_convert'),
-            'fileNonce'    => wp_create_nonce('any2html_file_convert'),
+            'ajaxUrl'   => admin_url('admin-ajax.php'),
+            'nonce'     => wp_create_nonce('any2html_convert'),
+            'fileNonce' => wp_create_nonce('any2html_file_convert'),
+            'diagNonce' => wp_create_nonce('any2html_diag_convert'),
         ]);
     }
 }
