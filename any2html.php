@@ -3,7 +3,7 @@
 /**
  * Plugin Name:       Bibcit Any2HTML
  * Description:       Convert Markdown or file (pdf/image) to HTML inside the WordPress post editor using the Bibcit API. Requires a Bibcit API key obtained from bibcit.com. Your post content is sent to the Bibcit external API for conversion.
- * Version:           1.2.2
+ * Version:           1.2.3
  * Requires at least: 6.5
  * Requires PHP:      8.0
  * Author:            Rakesh Kumar
@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('ANY2HTML_VERSION',        '1.2.2');
+define('ANY2HTML_VERSION',        '1.2.3');
 define('ANY2HTML_OPTION_KEY',     'any2html_api_key');
 define('ANY2HTML_OPTION_STATUS',  'any2html_api_status');
 define('ANY2HTML_OPTION_ENABLED', 'any2html_enabled');
@@ -582,6 +582,15 @@ function any2html_render_meta_box()
                             <option value="tikz">TikZ</option>
                             <option value="symbolator">Symbolator</option>
                             <option value="wireviz">WireViz</option>
+                        </optgroup>
+                        <optgroup label="<?php esc_attr_e('Data &amp; Mind Visualization', 'bibcit-any2html'); ?>">
+                            <option value="vega">Vega</option>
+                            <option value="Vegalite">Vega-Lite</option>
+                            <option value="excalidraw">Excalidraw</option>
+                            <option value="markmap">Markmap</option>
+                        </optgroup>
+                        <optgroup label="<?php esc_attr_e('Vector Graphics', 'bibcit-any2html'); ?>">
+                            <option value="svg">SVG</option>
                         </optgroup>
                     </select>
                     <svg class="a2h-select-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

@@ -1,10 +1,10 @@
 === Bibcit Any2HTML ===
 Contributors:      bibcithelp,rastermechanism,rupeshonezone
-Tags:              markdown,  html converter, pdf, diagram,  mermaid
+Tags:              markdown, html converter, pdf, diagram, mermaid, svg
 Requires at least: 6.5
 Tested up to:      6.9
 Requires PHP:      8.0
-Stable tag:        1.2.2
+Stable tag:        1.2.3
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -28,6 +28,8 @@ Convert diagram source code to rendered HTML diagrams directly inside the post e
 * Graphs & Networks — Graphviz, D2, ERD, SMILES
 * Block & Flow Diagrams — BlockDiag, ActDiag, NwDiag, PacketDiag, RackDiag, SeqDiag, BPMN, Ditaa, Pikchr
 * Technical & Specialized — WaveDrom, Bytefield, SVGBob, TikZ, Symbolator, WireViz
+* Data & Mind Visualization - Vega, Vega-Lite, Excalidraw, Markmap
+* Vector Graphics- SVG
 
 Select your diagram type from the dropdown, paste your code, and click Convert to HTML.
 
